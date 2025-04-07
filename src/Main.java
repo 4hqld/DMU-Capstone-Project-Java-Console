@@ -1,0 +1,40 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // 관리자 권한 확인
+        /*if (!Utils.checkAdminPrivileges()) {
+            System.out.println("[오류] 관리자 권한이 필요합니다.");
+            return;
+        }*/
+
+        // 로그인 유형 선택
+        System.out.println("===== 로그인 유형 선택 =====");
+        System.out.println("1. 일반 사용자 로그인");
+        System.out.println("2. 관리자 로그인");
+        System.out.print("선택 >> ");
+        String loginType = sc.nextLine().trim();
+
+        boolean isAdmin = false;
+        switch (loginType) {
+            case "1":
+                if (!Login.loginUser(sc)) return;
+                break;
+            case "2":
+                if (!Login.loginAdmin(sc)) return;
+                isAdmin = true;
+                break;
+            default:
+                System.out.println("[오류] 잘못된 입력입니다.");
+                return;
+        }
+
+        if (isAdmin) {
+            Admin.run(sc);
+        } else {
+            Installer.run(sc);
+        }
+    }
+}
