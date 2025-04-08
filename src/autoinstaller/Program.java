@@ -1,3 +1,4 @@
+package autoinstaller;
 public class Program {
     public String name;
     public String url;

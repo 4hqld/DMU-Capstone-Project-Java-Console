@@ -1,3 +1,4 @@
+package autoinstaller;
 import java.io.File;
 import java.util.*;
 

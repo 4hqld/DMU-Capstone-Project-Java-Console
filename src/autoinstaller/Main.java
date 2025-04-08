@@ -1,3 +1,4 @@
+package autoinstaller;
 import java.util.Scanner;
 
 public class Main {

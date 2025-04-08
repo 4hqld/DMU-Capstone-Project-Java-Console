@@ -1,3 +1,4 @@
+package autoinstaller;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
@@ -6,8 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Utils {
-    static final String INSTALL_LIST = "data/install_list.json";
-    static final String LOG_FILE = "data/install_log.txt";
+    static final String INSTALL_LIST = "JSON/install_list.json";
+    static final String LOG_FILE = "logs/log.txt";
     static final String INSTALLER_DIR = "installer/";
 
     private static Scanner scanner = new Scanner(System.in);
