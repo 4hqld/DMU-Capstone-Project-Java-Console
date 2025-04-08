@@ -175,4 +175,9 @@ public class Utils {
         System.out.println("\n[정보] 엔터를 누르면 관리자 메뉴로 돌아갑니다...");
         scanner.nextLine();
     }
+    // 콘솔 환경이면 비밀번호 가리기, IDE 환경이면 일반 입력
+    public static String readPassword(String prompt, Scanner sc) {
+        System.out.print(prompt);
+        return sc.nextLine(); // IDE 환경에서도 오류 없이 동작
+    } 
 }

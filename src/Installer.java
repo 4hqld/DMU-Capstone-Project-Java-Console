@@ -25,7 +25,6 @@ public class Installer {
         }
 
         System.out.print("예: 1,3 또는 all >> ");
-        sc.nextLine(); // 🔹 버퍼 클리어용 한 줄 추가
         String selectionInput = sc.nextLine();
         Set<Integer> selections = Utils.parseSelection(selectionInput, list.size());
         if (selections.isEmpty()) {
