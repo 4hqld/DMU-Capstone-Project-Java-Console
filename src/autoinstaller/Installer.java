@@ -1,14 +1,10 @@
 package autoinstaller;
+
 import java.io.File;
 import java.util.*;
 
 public class Installer {
     public static void run(Scanner sc) {
-        /*if (!Utils.checkAdminPrivileges()) {
-            System.out.println("[오류] 관리자 권한이 필요합니다.");
-            return;
-        }*/
-
         if (!Utils.checkEnvironment()) {
             System.out.println("[오류] 환경 요구사항을 충족하지 못했습니다.");
             return;
@@ -41,23 +37,39 @@ public class Installer {
             count++;
             System.out.printf("[%d/%d] %s 설치 진행 중...\n", count, total, p.name);
 
+            long installStart = System.currentTimeMillis();
+
             if (new File(p.checkPath).exists()) {
                 System.out.println("[정보] 이미 설치됨: " + p.name);
                 Utils.log("[건너뜀] " + p.name + " (이미 설치됨)");
+                Utils.getResultList().add(new ProgramInstallResult(p.name, "건너뜀", 0, "이미 설치됨"));
                 continue;
             }
 
             if (!Utils.downloadInstaller(p)) {
+                long elapsed = (System.currentTimeMillis() - installStart) / 1000;
                 Utils.log("[실패] " + p.name + " 다운로드 실패");
+                Utils.getResultList().add(new ProgramInstallResult(p.name, "실패", elapsed, "다운로드 실패"));
                 continue;
             }
 
             boolean success = Utils.executeCommand(p.installCommand);
-            Utils.log("[" + (success ? "성공" : "실패") + "] " + p.name + " 설치");
+            long elapsed = (System.currentTimeMillis() - installStart) / 1000;
 
+            Utils.log("[" + (success ? "성공" : "실패") + "] " + p.name + " 설치");
             System.out.println("[정보] 설치 " + (success ? "완료" : "실패") + ": " + p.name);
+
+            Utils.getResultList().add(new ProgramInstallResult(
+                p.name,
+                success ? "성공" : "실패",
+                elapsed,
+                success ? "" : "설치 명령 실행 실패"
+            ));
         }
 
-        Utils.promptRestart(sc);
+        Utils.printDetailedSummary();  // 요약 리포트 출력
+        Utils.writeSummaryToLog();      // 로그 파일 저장
+        Utils.writeSummaryToFile();     // 별도 리포트 파일 저장
+        Utils.promptRestart(sc);       // 재시작 여부 확인
     }
 }

@@ -306,4 +306,121 @@ public class Utils {
         System.out.print(prompt);
         return sc.nextLine(); // IDE 환경에서도 호환성 있게 처리
     }
+
+    //설치 결과 저장용 리스트
+    private static List<ProgramInstallResult> resultList = new ArrayList<>();
+
+    public static List<ProgramInstallResult> getResultList() {
+        return resultList;
+    }
+    public static void printDetailedSummary() {
+        if (resultList.isEmpty()) {
+            System.out.println("[정보] 설치된 프로그램이 없습니다.");
+            return;
+        }
+    
+        System.out.println("\n[설치 요약 리포트]");
+        System.out.println("────────────────────────────────────────────");
+        System.out.printf("%-25s %-8s %-10s %-30s%n", "프로그램", "상태", "경과(초)", "비고");
+        System.out.println("────────────────────────────────────────────");
+    
+        int successCount = 0, failCount = 0, skipCount = 0;
+    
+        for (ProgramInstallResult result : resultList) {
+            String name = result.getName();
+            String status = result.getStatus();
+            long time = result.getElapsedSeconds();
+            String reason = result.getReason();
+    
+            switch (status) {
+                case "성공" -> successCount++;
+                case "실패" -> failCount++;
+                case "건너뜀" -> skipCount++;
+            }
+    
+            System.out.printf("%-25s %-8s %-10d %-30s%n", name, status, time, reason);
+        }
+    
+        System.out.println("────────────────────────────────────────────");
+        System.out.printf("총 %d개 중 %d개 성공, %d개 실패, %d개 건너뜀%n",
+            resultList.size(), successCount, failCount, skipCount);
+        System.out.println("────────────────────────────────────────────");
+    }
+    public static void writeSummaryToLog() {
+        if (resultList.isEmpty()) {
+            return;
+        }
+    
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n[설치 요약 리포트]").append(System.lineSeparator());
+        sb.append("────────────────────────────────────────────").append(System.lineSeparator());
+        sb.append(String.format("%-25s %-8s %-10s %-30s%n", "프로그램", "상태", "경과(초)", "비고"));
+        sb.append("────────────────────────────────────────────").append(System.lineSeparator());
+    
+        int successCount = 0, failCount = 0, skipCount = 0;
+    
+        for (ProgramInstallResult result : resultList) {
+            String name = result.getName();
+            String status = result.getStatus();
+            long time = result.getElapsedSeconds();
+            String reason = result.getReason();
+    
+            switch (status) {
+                case "성공" -> successCount++;
+                case "실패" -> failCount++;
+                case "건너뜀" -> skipCount++;
+            }
+    
+            sb.append(String.format("%-25s %-8s %-10d %-30s%n", name, status, time, reason));
+        }
+    
+        sb.append("────────────────────────────────────────────").append(System.lineSeparator());
+        sb.append(String.format("총 %d개 중 %d개 성공, %d개 실패, %d개 건너뜀%n",
+            resultList.size(), successCount, failCount, skipCount));
+        sb.append("────────────────────────────────────────────").append(System.lineSeparator());
+    
+        log(sb.toString());
+    }
+    public static void writeSummaryToFile() {
+        if (resultList.isEmpty()) return;
+    
+        String timestamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File reportFile = new File("logs/report_" + timestamp + ".txt");
+    
+        try (PrintWriter writer = new PrintWriter(new FileWriter(reportFile))) {
+            writer.println("[설치 요약 리포트]");
+            writer.println("────────────────────────────────────────────");
+            writer.printf("%-25s %-8s %-10s %-30s%n", "프로그램", "상태", "경과(초)", "비고");
+            writer.println("────────────────────────────────────────────");
+    
+            int successCount = 0, failCount = 0, skipCount = 0;
+    
+            for (ProgramInstallResult result : resultList) {
+                String name = result.getName();
+                String status = result.getStatus();
+                long time = result.getElapsedSeconds();
+                String reason = result.getReason();
+    
+                switch (status) {
+                    case "성공" -> successCount++;
+                    case "실패" -> failCount++;
+                    case "건너뜀" -> skipCount++;
+                }
+    
+                writer.printf("%-25s %-8s %-10d %-30s%n", name, status, time, reason);
+
+            }
+    
+            writer.println("────────────────────────────────────────────");
+            writer.printf("총 %d개 중 %d개 성공, %d개 실패, %d개 건너뜀%n",
+                    resultList.size(), successCount, failCount, skipCount);
+            writer.println("────────────────────────────────────────────");
+    
+            System.out.println("[정보] 설치 요약 리포트가 logs 폴더에 저장되었습니다.");
+        } catch (IOException e) {
+            System.out.println("[오류] 설치 리포트 파일 저장 실패: " + e.getMessage());
+        }
+    }
+    
+    
 }
