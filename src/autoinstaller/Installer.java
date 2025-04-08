@@ -5,6 +5,7 @@ import java.util.*;
 
 public class Installer {
     public static void run(Scanner sc) {
+        Utils.clearConsole();
         if (!Utils.checkEnvironment()) {
             System.out.println("[오류] 환경 요구사항을 충족하지 못했습니다.");
             return;
