@@ -4,6 +4,7 @@ public class Admin {
     public static void run(Scanner sc) {
         while (true) {
             Utils.clearConsole();
+            Utils.log("[정보] 관리자 로그인");
             System.out.println("\n===== 관리자 메뉴 =====");
             System.out.println("1. 프로그램 목록 보기");
             System.out.println("2. 프로그램 추가");
