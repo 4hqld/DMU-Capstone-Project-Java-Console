@@ -7,7 +7,8 @@ public class Admin {
             System.out.println("\n===== 관리자 메뉴 =====");
             System.out.println("1. 프로그램 목록 보기");
             System.out.println("2. 프로그램 추가");
-            System.out.println("3. 로그 보기");
+            System.out.println("3. 프로그램 제거");
+            System.out.println("4. 로그 보기");
             System.out.println("0. 종료");
             System.out.print("선택 >> ");
 
@@ -22,6 +23,10 @@ public class Admin {
                     Utils.addProgram(sc);
                     break;
                 case "3":
+                    Utils.clearConsole();
+                    Utils.deleteProgram(sc);
+                    break;    
+                case "4":
                     Utils.clearConsole();
                     Utils.showLogs();
                     break;

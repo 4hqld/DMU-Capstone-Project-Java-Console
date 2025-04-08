@@ -118,6 +118,8 @@ public class Utils {
     public static void addProgram(Scanner sc) {
         System.out.println("===프로그램 추가===");
         try {
+            List<Program> list = loadPrograms();
+    
             System.out.print("이름: ");
             String name = sc.nextLine().trim();
             System.out.print("URL: ");
@@ -129,21 +131,96 @@ public class Utils {
             System.out.print("설치 명령어: ");
             String command = sc.nextLine().trim();
     
-            // 하나라도 비어 있을 경우 저장하지 않음
             if (name.isEmpty() || url.isEmpty() || saveAs.isEmpty() || checkPath.isEmpty() || command.isEmpty()) {
                 System.out.println("[경고] 하나 이상의 항목이 비어 있어 추가를 취소합니다.");
                 pause();
                 return;
             }
     
-            String json = String.format("{\"name\":\"%s\",\"url\":\"%s\",\"saveAs\":\"%s\",\"checkPath\":\"%s\",\"installCommand\":\"%s\"}",
-                    name, url, saveAs, checkPath, command);
+            // 중복 검사
+            for (Program p : list) {
+                if (p.name.equalsIgnoreCase(name)) {
+                    System.out.println("[경고] 동일한 이름의 프로그램이 이미 존재합니다.");
+                    pause();
+                    return;
+                }
+            }
     
-            Files.writeString(Paths.get(Utils.INSTALL_LIST), json + ",", StandardOpenOption.APPEND);
+            list.add(new Program(name, url, saveAs, checkPath, command));
+    
+            // JSON 저장
+            StringBuilder sb = new StringBuilder();
+            sb.append("[\n");
+            for (int i = 0; i < list.size(); i++) {
+                Program p = list.get(i);
+                sb.append(String.format("  {\"name\":\"%s\",\"url\":\"%s\",\"saveAs\":\"%s\",\"checkPath\":\"%s\",\"installCommand\":\"%s\"}",
+                        p.name, p.url, p.saveAs, p.checkPath, p.installCommand));
+                if (i < list.size() - 1) sb.append(",\n");
+            }
+            sb.append("\n]");
+    
+            Files.writeString(Paths.get(INSTALL_LIST), sb.toString(), StandardOpenOption.TRUNCATE_EXISTING);
+    
             System.out.println("[성공] 프로그램이 추가되었습니다.");
         } catch (IOException e) {
             System.err.println("[오류] 프로그램 추가 실패: " + e.getMessage());
         }
+    }
+    
+    public static void deleteProgram(Scanner sc) {
+        try {
+            List<Program> list = loadPrograms();
+    
+            if (list.isEmpty()) {
+                System.out.println("[정보] 등록된 프로그램이 없습니다.");
+                pause();
+                return;
+            }
+    
+            System.out.println("=== 프로그램 목록 ===");
+            for (int i = 0; i < list.size(); i++) {
+                System.out.printf("%d. %s\n", i + 1, list.get(i).name);
+            }
+    
+            System.out.print("삭제할 프로그램 번호를 입력하세요 (취소: 0): ");
+            String input = sc.nextLine().trim();
+    
+            if (input.equals("0")) {
+                System.out.println("[정보] 삭제를 취소하였습니다.");
+                pause();
+                return;
+            }
+    
+            int index = Integer.parseInt(input) - 1;
+            if (index < 0 || index >= list.size()) {
+                System.out.println("[경고] 잘못된 번호입니다.");
+                pause();
+                return;
+            }
+    
+            Program removed = list.remove(index);
+    
+            // 변경된 리스트 저장
+            StringBuilder sb = new StringBuilder();
+            sb.append("[\n");
+            for (int i = 0; i < list.size(); i++) {
+                Program p = list.get(i);
+                sb.append(String.format("  {\"name\":\"%s\",\"url\":\"%s\",\"saveAs\":\"%s\",\"checkPath\":\"%s\",\"installCommand\":\"%s\"}",
+                        p.name, p.url, p.saveAs, p.checkPath, p.installCommand));
+                if (i < list.size() - 1) sb.append(",\n");
+            }
+            sb.append("\n]");
+    
+            Files.writeString(Paths.get(INSTALL_LIST), sb.toString(), StandardOpenOption.TRUNCATE_EXISTING);
+    
+            System.out.printf("[성공] '%s' 프로그램이 삭제되었습니다.\n", removed.name);
+        } catch (NumberFormatException e) {
+            System.out.println("[오류] 숫자를 입력해주세요.");
+        } catch (IOException e) {
+            System.out.println("[오류] 파일 저장 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    
+        pause();
     }
     
     
@@ -179,5 +256,5 @@ public class Utils {
     public static String readPassword(String prompt, Scanner sc) {
         System.out.print(prompt);
         return sc.nextLine(); // IDE 환경에서도 오류 없이 동작
-    } 
+    }
 }
