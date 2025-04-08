@@ -20,16 +20,17 @@ public class Main {
         boolean isAdmin = false;
         switch (loginType) {
             case "1":
-                if (!Login.loginUser(sc)) return;
+                isAdmin = false;
                 break;
             case "2":
-                if (!Login.loginAdmin(sc)) return;
                 isAdmin = true;
                 break;
             default:
                 System.out.println("[오류] 잘못된 입력입니다.");
                 return;
         }
+
+        if (!AuthManager.authenticate(sc, isAdmin)) return;
 
         if (isAdmin) {
             Admin.run(sc);
