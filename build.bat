@@ -9,16 +9,16 @@ set MAIN_CLASS=autoinstaller.Main
 set JAR_NAME=AutoInstaller-FAT.jar
 
 :: [정보] build 폴더 초기화
-echo [정보] build 디렉터리 초기화 중...
+echo build 디렉터리 초기화 중...
 if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
 mkdir %BUILD_DIR%
 
 :: [정보] 클래스 컴파일
-echo [정보] 소스 컴파일 중...
+echo 소스 컴파일 중...
 javac -d %BUILD_DIR% -cp "%LIB_DIR%\*" %SRC_DIR%\autoinstaller\*.java
 
 if %ERRORLEVEL% NEQ 0 (
-    echo [오류] 컴파일 실패.
+    echo 컴파일 실패.
     exit /b 1
 )
 
@@ -32,7 +32,7 @@ mkdir %TMP_DIR%\autoinstaller
 xcopy /Y /E %BUILD_DIR%\*.class %TMP_DIR%\
 
 :: [정보] 라이브러리 JAR 압축 해제
-echo [정보] 라이브러리 압축 해제 중...
+echo 라이브러리 압축 해제 중...
 for %%f in (%LIB_DIR%\*.jar) do (
     echo    %%~nxf 포함 중...
     pushd %TMP_DIR%
@@ -47,11 +47,11 @@ jar cfm %JAR_NAME% manifest.txt -C %TMP_DIR% .
 :: [정리]
 rmdir /s /q %TMP_DIR%
 
-echo [성공] fat JAR 생성 완료: %JAR_NAME%
+echo fat JAR 생성 완료: %JAR_NAME%
 
 :: [정보] 실행 예시
 echo.
-echo [정보] 실행 명령어:
+echo 실행 명령어:
 echo java -jar %JAR_NAME%
 echo.
 
