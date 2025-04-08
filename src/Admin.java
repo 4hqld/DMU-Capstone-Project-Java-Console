@@ -29,7 +29,7 @@ public class Admin {
                     break;    
                 case "4":
                     Utils.clearConsole();
-                    Utils.showLogs();
+                    Utils.showLogs(sc);
                     break;
                 case "0":
                     return;

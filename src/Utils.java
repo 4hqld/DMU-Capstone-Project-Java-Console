@@ -225,15 +225,76 @@ public class Utils {
     
     
 
-    public static void showLogs() {
-        try {
-            System.out.println("\n[설치 로그]");
-            Files.lines(Paths.get(LOG_FILE)).forEach(System.out::println);
-        } catch (IOException e) {
-            System.err.println("[오류] 로그 파일 열기 실패");
+    public static void showLogs(Scanner sc) {
+        while (true) {
+            clearConsole();
+            System.out.println("\n=== 로그 보기 ===");
+            System.out.println("1. 전체 로그 보기");
+            System.out.println("2. 로그 유형 필터 ([성공], [실패], [건너뜀], [경고], [오류])");
+            System.out.println("3. 날짜 필터 (예: 2025-04-07)");
+            System.out.println("4. 키워드 검색");
+            System.out.println("0. 이전 메뉴로");
+            System.out.print("선택 >> ");
+    
+            String choice = sc.nextLine().trim();
+            List<String> lines;
+    
+            try {
+                lines = Files.readAllLines(Paths.get(LOG_FILE));
+            } catch (IOException e) {
+                System.err.println("[오류] 로그 파일을 읽는 중 문제가 발생했습니다.");
+                pause();
+                return;
+            }
+    
+            switch (choice) {
+                case "1":
+                    clearConsole();
+                    System.out.println("=== 전체 로그 ===");
+                    lines.forEach(System.out::println);
+                    break;
+    
+                case "2":
+                    System.out.print("필터할 유형 ([성공], [실패], 등) 입력 >> ");
+                    String type = sc.nextLine().trim();
+                    clearConsole();
+                    System.out.println("=== " + type + " 로그 ===");
+                    lines.stream()
+                         .filter(line -> line.contains(type))
+                         .forEach(System.out::println);
+                    break;
+    
+                case "3":
+                    System.out.print("필터할 날짜 (예: 2025-04-07) 입력 >> ");
+                    String date = sc.nextLine().trim();
+                    clearConsole();
+                    System.out.println("=== " + date + " 로그 ===");
+                    lines.stream()
+                         .filter(line -> line.contains(date))
+                         .forEach(System.out::println);
+                    break;
+    
+                case "4":
+                    System.out.print("검색할 키워드 입력 >> ");
+                    String keyword = sc.nextLine().trim();
+                    clearConsole();
+                    System.out.println("=== '" + keyword + "' 포함 로그 ===");
+                    lines.stream()
+                         .filter(line -> line.contains(keyword))
+                         .forEach(System.out::println);
+                    break;
+    
+                case "0":
+                    return;
+    
+                default:
+                    System.out.println("[경고] 잘못된 입력입니다.");
+            }
+    
+            pause();
         }
-        pause();
     }
+    
 
     public static void clearConsole() {
         try {
