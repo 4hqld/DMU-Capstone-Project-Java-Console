@@ -255,7 +255,7 @@ public class Utils {
                     break;
     
                 case "2":
-                    System.out.print("필터할 유형 ([성공], [실패], 등) 입력 >> ");
+                    System.out.print("필터할 유형 (성공, 실패 등) 입력 >> ");
                     String type = sc.nextLine().trim();
                     clearConsole();
                     System.out.println("=== " + type + " 로그 ===");
