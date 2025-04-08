@@ -175,4 +175,15 @@ public class Utils {
         System.out.println("\n[정보] 엔터를 누르면 관리자 메뉴로 돌아갑니다...");
         scanner.nextLine();
     }
+    public static String readPassword(String prompt, Scanner sc) {
+        Console console = System.console();
+        if (console != null) {
+            char[] pwdChars = console.readPassword(prompt);
+            return new String(pwdChars);
+        } else {
+            System.out.print(prompt);
+            return sc.nextLine();
+        }
+    }
+
 }
