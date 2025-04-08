@@ -1,2 +1,1 @@
 Main-Class: autoinstaller.Main 
-Class-Path: lib\jackson-annotations-2.15.2.jar;lib\jackson-core-2.15.2.jar;lib\jackson-databind-2.15.2.jar 

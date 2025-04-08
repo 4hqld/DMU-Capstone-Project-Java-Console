@@ -1,49 +1,59 @@
 @echo off
-REM 현재 스크립트 위치로 이동 (항상 Project 루트 보장)
-cd /d "%~dp0"
+setlocal
 
-REM 경로 변수 설정
+:: [정보] 경로 설정
 set SRC_DIR=src
-set BIN_DIR=build
+set BUILD_DIR=build
 set LIB_DIR=lib
 set MAIN_CLASS=autoinstaller.Main
-set JAR_NAME=AutoInstaller.jar
-set MANIFEST_FILE=manifest.txt
+set JAR_NAME=AutoInstaller-FAT.jar
 
-REM 빌드 시작
-echo [정보] 빌드 디렉터리 초기화 중...
-if exist %BIN_DIR% rmdir /s /q %BIN_DIR%
-mkdir %BIN_DIR%
+:: [정보] build 폴더 초기화
+echo [정보] build 디렉터리 초기화 중...
+if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
+mkdir %BUILD_DIR%
 
-REM lib 디렉터리 내 모든 JAR을 classpath로 설정
-setlocal EnableDelayedExpansion
-set CP=
-for %%f in (%LIB_DIR%\*.jar) do (
-    set CP=!CP!;%%f
-)
-REM 첫 문자 세미콜론 제거
-set CP=%CP:~1%
-endlocal & set CLASSPATH=%CP%
+:: [정보] 클래스 컴파일
+echo [정보] 소스 컴파일 중...
+javac -d %BUILD_DIR% -cp "%LIB_DIR%\*" %SRC_DIR%\autoinstaller\*.java
 
-REM 컴파일 수행
-echo [정보] 소스 코드 컴파일 중...
-javac -encoding UTF-8 -cp "%CLASSPATH%" -d %BIN_DIR% %SRC_DIR%\autoinstaller\*.java
-
-if errorlevel 1 (
-    echo [오류] 컴파일 실패
+if %ERRORLEVEL% NEQ 0 (
+    echo [오류] 컴파일 실패.
     exit /b 1
 )
 
-REM Manifest 파일 생성
-echo [정보] Manifest 생성 중...
-echo Main-Class: %MAIN_CLASS% > %MANIFEST_FILE%
-echo Class-Path: %CLASSPATH% >> %MANIFEST_FILE%
+:: [정보] fat jar용 임시 폴더 생성
+set TMP_DIR=tmp_jar
+if exist %TMP_DIR% rmdir /s /q %TMP_DIR%
+mkdir %TMP_DIR%
+mkdir %TMP_DIR%\autoinstaller
 
-REM JAR 생성
-echo [정보] Fat JAR(%JAR_NAME%) 생성 중...
-jar cfm %JAR_NAME% %MANIFEST_FILE% -C %BIN_DIR% .
+:: [정보] 클래스 복사
+xcopy /Y /E %BUILD_DIR%\*.class %TMP_DIR%\
 
-REM 정리
-del %MAN
+:: [정보] 라이브러리 JAR 압축 해제
+echo [정보] 라이브러리 압축 해제 중...
+for %%f in (%LIB_DIR%\*.jar) do (
+    echo    %%~nxf 포함 중...
+    pushd %TMP_DIR%
+    jar xf ..\%%f
+    popd
+)
 
+:: [정보] fat jar 생성
+echo Main-Class: %MAIN_CLASS% > manifest.txt
+jar cfm %JAR_NAME% manifest.txt -C %TMP_DIR% .
+
+:: [정리]
+rmdir /s /q %TMP_DIR%
+
+echo [성공] fat JAR 생성 완료: %JAR_NAME%
+
+:: [정보] 실행 예시
+echo.
+echo [정보] 실행 명령어:
+echo java -jar %JAR_NAME%
+echo.
+
+endlocal
 pause
