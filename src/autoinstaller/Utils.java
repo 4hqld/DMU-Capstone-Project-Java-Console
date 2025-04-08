@@ -1,4 +1,5 @@
 package autoinstaller;
+
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
@@ -10,15 +11,19 @@ public class Utils {
     static final String INSTALL_LIST = "JSON/install_list.json";
     static final String LOG_FILE = "logs/log.txt";
     static final String INSTALLER_DIR = "installer/";
-
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static boolean checkAdminPrivileges() {
         return System.getProperty("user.name").equals("Administrator");
     }
 
     public static boolean checkEnvironment() {
-        return new File("C:/").getFreeSpace() > 5L * 1024 * 1024 * 1024;
+        long freeSpace = new File("C:/").getFreeSpace();
+        boolean isSufficient = freeSpace > 5L * 1024 * 1024 * 1024;
+        if (!isSufficient) {
+            System.out.println("[경고] 디스크 공간이 5GB보다 적습니다.");
+        }
+        return isSufficient;
     }
 
     public static List<Program> loadPrograms() {
@@ -62,14 +67,17 @@ public class Utils {
             Path dir = Paths.get(INSTALLER_DIR);
             if (!Files.exists(dir)) Files.createDirectory(dir);
             Path dest = dir.resolve(p.saveAs);
-            if (Files.exists(dest)) return true;
-
+            if (Files.exists(dest)) {
+                System.out.println("[정보] 설치 파일이 이미 존재합니다: " + p.saveAs);
+                return true;
+            }
             try (InputStream in = URI.create(p.url).toURL().openStream()) {
                 Files.copy(in, dest);
+                System.out.println("[성공] 다운로드 완료: " + p.name);
                 return true;
             }
         } catch (Exception e) {
-            System.err.println("[오류] 다운로드 실패: " + p.name);
+            System.err.println("[오류] 다운로드 실패: " + p.name + " - " + e.getMessage());
             return false;
         }
     }
@@ -78,7 +86,7 @@ public class Utils {
         try {
             return new ProcessBuilder("cmd", "/c", command).inheritIO().start().waitFor() == 0;
         } catch (Exception e) {
-            System.err.println("[오류] 설치 실패: " + e.getMessage());
+            System.err.println("[오류] 명령어 실행 실패: " + e.getMessage());
             return false;
         }
     }
@@ -89,9 +97,12 @@ public class Utils {
         if (input.equals("y")) {
             try {
                 new ProcessBuilder("shutdown", "/r", "/t", "0").start();
+                System.out.println("[정보] 시스템 재시작을 수행합니다.");
             } catch (IOException e) {
-                System.err.println("[오류] 시스템 재시작 실패");
+                System.err.println("[오류] 시스템 재시작 실패: " + e.getMessage());
             }
+        } else {
+            System.out.println("[정보] 시스템 재시작이 취소되었습니다.");
         }
     }
 
@@ -111,16 +122,16 @@ public class Utils {
     }
 
     public static void printPrograms() {
-        System.out.println("===사용 가능한 프로그램===");
-        loadPrograms().forEach(p -> System.out.println("- " + p.name));
+        List<Program> list = loadPrograms();
+        System.out.println("=== 사용 가능한 프로그램 목록 ===");
+        list.forEach(p -> System.out.println("- " + p.name));
         pause();
     }
 
     public static void addProgram(Scanner sc) {
-        System.out.println("===프로그램 추가===");
+        System.out.println("=== 프로그램 추가 ===");
         try {
             List<Program> list = loadPrograms();
-    
             System.out.print("이름: ");
             String name = sc.nextLine().trim();
             System.out.print("URL: ");
@@ -131,14 +142,13 @@ public class Utils {
             String checkPath = sc.nextLine().trim();
             System.out.print("설치 명령어: ");
             String command = sc.nextLine().trim();
-    
+
             if (name.isEmpty() || url.isEmpty() || saveAs.isEmpty() || checkPath.isEmpty() || command.isEmpty()) {
                 System.out.println("[경고] 하나 이상의 항목이 비어 있어 추가를 취소합니다.");
                 pause();
                 return;
             }
-    
-            // 중복 검사
+
             for (Program p : list) {
                 if (p.name.equalsIgnoreCase(name)) {
                     System.out.println("[경고] 동일한 이름의 프로그램이 이미 존재합니다.");
@@ -146,10 +156,9 @@ public class Utils {
                     return;
                 }
             }
-    
+
             list.add(new Program(name, url, saveAs, checkPath, command));
-    
-            // JSON 저장
+
             StringBuilder sb = new StringBuilder();
             sb.append("[\n");
             for (int i = 0; i < list.size(); i++) {
@@ -159,49 +168,45 @@ public class Utils {
                 if (i < list.size() - 1) sb.append(",\n");
             }
             sb.append("\n]");
-    
             Files.writeString(Paths.get(INSTALL_LIST), sb.toString(), StandardOpenOption.TRUNCATE_EXISTING);
-    
+
             System.out.println("[성공] 프로그램이 추가되었습니다.");
         } catch (IOException e) {
             System.err.println("[오류] 프로그램 추가 실패: " + e.getMessage());
         }
+        pause();
     }
-    
+
     public static void deleteProgram(Scanner sc) {
+        List<Program> list = loadPrograms();
+        if (list.isEmpty()) {
+            System.out.println("[정보] 등록된 프로그램이 없습니다.");
+            pause();
+            return;
+        }
+
+        System.out.println("=== 프로그램 목록 ===");
+        for (int i = 0; i < list.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, list.get(i).name);
+        }
+
+        System.out.print("삭제할 프로그램 번호를 입력하세요 (취소: 0): ");
+        String input = sc.nextLine().trim();
+        if (input.equals("0")) {
+            System.out.println("[정보] 삭제를 취소하였습니다.");
+            pause();
+            return;
+        }
+
         try {
-            List<Program> list = loadPrograms();
-    
-            if (list.isEmpty()) {
-                System.out.println("[정보] 등록된 프로그램이 없습니다.");
-                pause();
-                return;
-            }
-    
-            System.out.println("=== 프로그램 목록 ===");
-            for (int i = 0; i < list.size(); i++) {
-                System.out.printf("%d. %s\n", i + 1, list.get(i).name);
-            }
-    
-            System.out.print("삭제할 프로그램 번호를 입력하세요 (취소: 0): ");
-            String input = sc.nextLine().trim();
-    
-            if (input.equals("0")) {
-                System.out.println("[정보] 삭제를 취소하였습니다.");
-                pause();
-                return;
-            }
-    
             int index = Integer.parseInt(input) - 1;
             if (index < 0 || index >= list.size()) {
                 System.out.println("[경고] 잘못된 번호입니다.");
                 pause();
                 return;
             }
-    
+
             Program removed = list.remove(index);
-    
-            // 변경된 리스트 저장
             StringBuilder sb = new StringBuilder();
             sb.append("[\n");
             for (int i = 0; i < list.size(); i++) {
@@ -211,35 +216,30 @@ public class Utils {
                 if (i < list.size() - 1) sb.append(",\n");
             }
             sb.append("\n]");
-    
             Files.writeString(Paths.get(INSTALL_LIST), sb.toString(), StandardOpenOption.TRUNCATE_EXISTING);
-    
+
             System.out.printf("[성공] '%s' 프로그램이 삭제되었습니다.\n", removed.name);
         } catch (NumberFormatException e) {
             System.out.println("[오류] 숫자를 입력해주세요.");
         } catch (IOException e) {
             System.out.println("[오류] 파일 저장 중 오류가 발생했습니다: " + e.getMessage());
         }
-    
         pause();
     }
-    
-    
 
     public static void showLogs(Scanner sc) {
         while (true) {
             clearConsole();
-            System.out.println("\n=== 로그 보기 ===");
+            System.out.println("=== 로그 보기 ===");
             System.out.println("1. 전체 로그 보기");
             System.out.println("2. 로그 유형 필터 ([성공], [실패], [건너뜀], [경고], [오류])");
             System.out.println("3. 날짜 필터 (예: 2025-04-07)");
             System.out.println("4. 키워드 검색");
             System.out.println("0. 이전 메뉴로");
             System.out.print("선택 >> ");
-    
             String choice = sc.nextLine().trim();
+
             List<String> lines;
-    
             try {
                 lines = Files.readAllLines(Paths.get(LOG_FILE));
             } catch (IOException e) {
@@ -247,55 +247,42 @@ public class Utils {
                 pause();
                 return;
             }
-    
+
             switch (choice) {
                 case "1":
                     clearConsole();
                     System.out.println("=== 전체 로그 ===");
                     lines.forEach(System.out::println);
                     break;
-    
                 case "2":
-                    System.out.print("필터할 유형 (성공, 실패 등) 입력 >> ");
+                    System.out.print("필터할 유형 입력 (예: [성공]) >> ");
                     String type = sc.nextLine().trim();
                     clearConsole();
                     System.out.println("=== " + type + " 로그 ===");
-                    lines.stream()
-                         .filter(line -> line.contains(type))
-                         .forEach(System.out::println);
+                    lines.stream().filter(line -> line.contains(type)).forEach(System.out::println);
                     break;
-    
                 case "3":
-                    System.out.print("필터할 날짜 (예: 2025-04-07) 입력 >> ");
+                    System.out.print("필터할 날짜 입력 (예: 2025-04-07) >> ");
                     String date = sc.nextLine().trim();
                     clearConsole();
                     System.out.println("=== " + date + " 로그 ===");
-                    lines.stream()
-                         .filter(line -> line.contains(date))
-                         .forEach(System.out::println);
+                    lines.stream().filter(line -> line.contains(date)).forEach(System.out::println);
                     break;
-    
                 case "4":
                     System.out.print("검색할 키워드 입력 >> ");
                     String keyword = sc.nextLine().trim();
                     clearConsole();
                     System.out.println("=== '" + keyword + "' 포함 로그 ===");
-                    lines.stream()
-                         .filter(line -> line.contains(keyword))
-                         .forEach(System.out::println);
+                    lines.stream().filter(line -> line.contains(keyword)).forEach(System.out::println);
                     break;
-    
                 case "0":
                     return;
-    
                 default:
                     System.out.println("[경고] 잘못된 입력입니다.");
             }
-    
             pause();
         }
     }
-    
 
     public static void clearConsole() {
         try {
@@ -309,7 +296,7 @@ public class Utils {
             System.out.println("[경고] 콘솔 화면 지우기 실패: " + e.getMessage());
         }
     }
-    
+
     private static void pause() {
         System.out.println("\n[정보] 엔터를 누르면 관리자 메뉴로 돌아갑니다...");
         scanner.nextLine();
@@ -317,6 +304,6 @@ public class Utils {
 
     public static String readPassword(String prompt, Scanner sc) {
         System.out.print(prompt);
-        return sc.nextLine(); // IDE 환경에서도 오류 없이 동작
+        return sc.nextLine(); // IDE 환경에서도 호환성 있게 처리
     }
 }
