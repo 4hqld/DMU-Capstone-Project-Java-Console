@@ -25,7 +25,9 @@ public class Installer {
         }
 
         System.out.print("예: 1,3 또는 all >> ");
-        Set<Integer> selections = Utils.parseSelection(sc.nextLine(), list.size());
+        sc.nextLine(); // 🔹 버퍼 클리어용 한 줄 추가
+        String selectionInput = sc.nextLine();
+        Set<Integer> selections = Utils.parseSelection(selectionInput, list.size());
         if (selections.isEmpty()) {
             System.out.println("[경고] 선택이 올바르지 않습니다.");
             return;
