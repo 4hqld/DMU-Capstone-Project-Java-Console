@@ -3,6 +3,7 @@ package autoinstaller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.Console;
 import java.io.File;
 import java.util.List;
 import java.util.Scanner;
@@ -28,11 +29,23 @@ public class AuthManager {
 
     public static boolean authenticate(Scanner sc, boolean isAdmin) {
         int attempts = 0;
+        Console console = System.console();
 
         while (attempts < 5) {
             System.out.print(isAdmin ? "관리자 ID: " : "ID: ");
             String id = sc.nextLine().trim();
-            String pw = Utils.readPassword(isAdmin ? "관리자 PW: " : "PW: ", sc);
+
+            String pw;
+
+            if (console != null) {
+                // 콘솔이 있는 경우 - readPassword 사용
+                char[] pwChars = console.readPassword(isAdmin ? "관리자 PW: " : "PW: ");
+                pw = new String(pwChars);
+            } else {
+                // 콘솔이 없는 경우 (IDE 등) - fallback
+                System.out.print(isAdmin ? "관리자 PW (콘솔 없음): " : "PW (콘솔 없음): ");
+                pw = sc.nextLine();
+            }
 
             for (Account acc : accountList) {
                 if (acc.getUsername().equals(id) && acc.getPassword().equals(pw)) {
