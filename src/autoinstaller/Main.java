@@ -21,6 +21,9 @@ public class Main {
                 break;
             default:
                 System.out.println("[오류] 잘못된 입력입니다.");
+                Utils.pause();
+                Utils.clearConsole();
+                main(args);
                 return;
         }
 

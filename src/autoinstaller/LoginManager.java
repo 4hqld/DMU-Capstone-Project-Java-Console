@@ -51,7 +51,8 @@ public class LoginManager {
 
             if (id.isEmpty() || pw.isEmpty()) {
                 System.out.println("[경고] ID 또는 PW가 비어 있습니다.");
-                attempts++;
+                Utils.pause();
+                Utils.clearConsole(); 
                 continue;
             }
 
