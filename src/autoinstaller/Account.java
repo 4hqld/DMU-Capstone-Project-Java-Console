@@ -128,6 +128,7 @@ public class Account {
                     found = true;
                     break;
                 }
+                //admin 삭제 방지, 삭제 시 해당 ID,PW 입력하도록 해야 함.
             }
 
             if (found) {
