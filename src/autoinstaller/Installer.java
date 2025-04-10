@@ -27,6 +27,9 @@ public class Installer {
         Set<Integer> selections = Utils.parseSelection(selectionInput, list.size());
         if (selections.isEmpty()) {
             System.out.println("[경고] 선택이 올바르지 않습니다.");
+            Utils.pause();
+            Utils.clearConsole();
+            run(sc);
             return;
         }
 
