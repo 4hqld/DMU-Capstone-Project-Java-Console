@@ -24,7 +24,7 @@ public class Main {
                 return;
         }
 
-        if (!AuthManager.authenticate(sc, isAdmin)) return;
+        if (!LoginManager.authenticate(sc, isAdmin)) return;
 
         if (isAdmin) {
             Admin.run(sc);

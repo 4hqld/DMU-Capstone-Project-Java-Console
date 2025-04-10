@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Scanner;
 
-public class AuthManager {
+public class LoginManager {
 
     private static final String ACCOUNT_FILE = "JSON/accounts.json";
     private static List<Account> accountList;
