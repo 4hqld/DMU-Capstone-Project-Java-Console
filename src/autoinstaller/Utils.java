@@ -248,7 +248,8 @@ public class Utils {
 
     public static void printLogsByType(String unused, Scanner sc) {
     System.out.print("필터링할 로그 유형을 입력하세요 ([성공], [실패], [건너뜀], [경고], [오류]) >> ");
-    String type = sc.nextLine().trim();
+    String ftype = sc.nextLine().trim();
+    String type = "[" + ftype + "]";
 
     if (!type.matches("\\[[가-힣]+]")) {
         System.out.println("[경고] 올바른 로그 유형 형식이 아닙니다.");
@@ -257,6 +258,7 @@ public class Utils {
     }
 
     try {
+        System.out.println("'"+type+"'"+" 에 대한 검색 결과");
         List<String> logs = Files.readAllLines(Paths.get(LOG_FILE));
         List<String> filtered = logs.stream()
             .filter(line -> line.contains(type))
@@ -278,6 +280,7 @@ public class Utils {
     String date = sc.nextLine().trim();
 
     try {
+        System.out.println(date+"에 대한 검색 결과");
         LocalDate.parse(date); // 유효한 날짜인지 확인
         List<String> logs = Files.readAllLines(Paths.get(LOG_FILE));
         List<String> filtered = logs.stream()
@@ -306,6 +309,7 @@ public class Utils {
         }
         else{
             try {
+                System.out.println("'"+keyword+"'"+" 에 대한 검색 결과");
                 List<String> logs = Files.readAllLines(Paths.get(LOG_FILE));
                 List<String> filtered = logs.stream()
                     .filter(line -> line.contains(keyword))
