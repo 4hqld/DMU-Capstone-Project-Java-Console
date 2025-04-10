@@ -8,8 +8,9 @@ public class Admin {
             Utils.clearConsole();
             System.out.println("\n=== 관리자 메뉴 ===");
             System.out.println("1. 프로그램 관리");
-            System.out.println("2. 로그 보기");
-            System.out.println("3. 로그아웃");
+            System.out.println("2. 계정 관리");
+            System.out.println("3. 로그 보기");
+            System.out.println("4. 로그아웃");
             System.out.print("선택: ");
             String choice = sc.nextLine();
 
@@ -19,10 +20,13 @@ public class Admin {
                     programManagementMenu(sc);
                     break;
                 case "2":
+                    Account.AccountManagementMenu(sc);
+                    break;
+                case "3":
                     Utils.clearConsole();
                     LogMenu(sc);
                     break;
-                case "3":
+                case "4":
                     Utils.clearConsole();
                     System.out.println("[정보] 로그아웃합니다.");
                     return;
@@ -33,7 +37,7 @@ public class Admin {
     }
 
     /*Program Management Menu */
-    private static void programManagementMenu(Scanner scanner) {
+    private static void programManagementMenu(Scanner sc) {
         while (true) {
             Utils.clearConsole();
             System.out.println("\n=== 프로그램 관리 ===");
@@ -42,7 +46,7 @@ public class Admin {
             System.out.println("3. 프로그램 제거");
             System.out.println("0. 뒤로가기");
             System.out.print("선택: ");
-            String subChoice = scanner.nextLine();
+            String subChoice = sc.nextLine();
 
             switch (subChoice) {
                 case "1":
@@ -52,11 +56,11 @@ public class Admin {
                     break;
                 case "2":
                     Utils.clearConsole();
-                    Utils.addProgram(scanner);
+                    Utils.addProgram(sc);
                     break;
                 case "3":
                     Utils.clearConsole();
-                    Utils.deleteProgram(scanner);
+                    Utils.deleteProgram(sc);
                     break;
                 case "0":
                     Utils.clearConsole();
@@ -102,5 +106,5 @@ public class Admin {
                     System.out.println("[경고] 잘못된 입력입니다.");
             }
         }
-    }
+    }    
 }
