@@ -54,7 +54,7 @@ public class AuthManager {
                         return false;
                     }
                     if (!isAdmin && !"user".equalsIgnoreCase(acc.getRole())) {
-                        System.out.println("[오류] 일반 사용자 로그인 시 관리자 계정을 사용할 수 없습니다.");
+                        System.out.println("[오류] 해당 계정은 접근 권한이 없습니다.");
                         return false;
                     }
 

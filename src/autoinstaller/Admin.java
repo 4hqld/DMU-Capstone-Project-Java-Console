@@ -60,7 +60,6 @@ public class Admin {
                     Utils.clearConsole();
                     return;
                 default:
-                    Utils.clearConsole();
                     System.out.println("[경고] 올바른 번호를 입력해주세요.");
             }
         }
@@ -92,6 +91,7 @@ public class Admin {
                 case "4": //print filter Keyword
                     Utils.clearConsole();
                     Utils.printLogsByKeyword(null, sc);
+                    break;
                 case "0":
                     return;
                 default:

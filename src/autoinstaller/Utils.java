@@ -15,10 +15,13 @@ public class Utils {
     static final String INSTALLER_DIR = "installer/";
     private static final Scanner scanner = new Scanner(System.in);
 
+    /*/
     public static boolean checkAdminPrivileges() {
         return System.getProperty("user.name").equals("Administrator");
-    }
+    }*/
 
+    /*EnvironMent */
+    
     public static boolean checkEnvironment() {
         long freeSpace = new File("C:/").getFreeSpace();
         boolean isSufficient = freeSpace > 5L * 1024 * 1024 * 1024;
@@ -254,6 +257,7 @@ public class Utils {
 
         if (!type.matches("\\[[가-힣]+]")) {
             System.out.println("[경고] 올바른 로그 유형 형식이 아닙니다.");
+            pause();
             return;
         }
 
@@ -302,24 +306,26 @@ public class Utils {
 
         if (keyword.isEmpty()) {
             System.out.println("[경고] 키워드는 비워둘 수 없습니다.");
+            pause();
             return;
         }
+        else{
+            try {
+                List<String> logs = Files.readAllLines(Paths.get(LOG_FILE));
+                List<String> filtered = logs.stream()
+                    .filter(line -> line.contains(keyword))
+                    .collect(Collectors.toList());
 
-        try {
-            List<String> logs = Files.readAllLines(Paths.get(LOG_FILE));
-            List<String> filtered = logs.stream()
-                .filter(line -> line.contains(keyword))
-                .collect(Collectors.toList());
-
-            if (filtered.isEmpty()) {
-                System.out.println("[정보] 해당 키워드가 포함된 로그가 없습니다.");
-            } else {
-                filtered.forEach(System.out::println);
+                if (filtered.isEmpty()) {
+                    System.out.println("[정보] 해당 키워드가 포함된 로그가 없습니다.");
+                } else {
+                    filtered.forEach(System.out::println);
+                }
+            } catch (IOException e) {
+                System.out.println("[오류] 로그 파일을 읽는 중 문제가 발생했습니다: " + e.getMessage());
             }
-        } catch (IOException e) {
-            System.out.println("[오류] 로그 파일을 읽는 중 문제가 발생했습니다: " + e.getMessage());
+            pause();
         }
-        pause();
     }
         
     /*Console */
@@ -338,7 +344,7 @@ public class Utils {
     }
 
     public static void pause() {
-        System.out.println("\n[정보] 엔터를 누르면 관리자 메뉴로 돌아갑니다...");
+        System.out.println("\n[정보] 엔터를 눌러 계속하십시오...");
         scanner.nextLine();
     }
 
@@ -460,7 +466,5 @@ public class Utils {
         } catch (IOException e) {
             System.out.println("[오류] 설치 리포트 파일 저장 실패: " + e.getMessage());
         }
-    }
-    
-    
+    }   
 }
