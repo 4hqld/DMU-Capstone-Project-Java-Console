@@ -111,15 +111,6 @@ public class Utils {
         }
     }
 
-    public static void log(String message) {
-        try (FileWriter fw = new FileWriter(LOG_FILE, true)) {
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            fw.write(message + " - " + timestamp + System.lineSeparator());
-        } catch (IOException e) {
-            System.out.println("[오류] 로그 기록 실패: " + e.getMessage());
-        }
-    }
-
     public static String getValue(String json, String key) {
         String[] split = json.split("\"" + key + "\"\\s*:\\s*\"");
         if (split.length < 2) return "";
@@ -236,68 +227,77 @@ public class Utils {
     }
     
     /*LOG */
-        public static void printAllLogs(String unused) {
-            clearConsole();
-            try {
-                List<String> logs = Files.readAllLines(Paths.get(LOG_FILE));
-                if (logs.isEmpty()) {
-                    System.out.println("[정보] 로그 파일이 비어 있습니다.");
-                } else {
-                    logs.forEach(System.out::println);
-                }
-            } catch (IOException e) {
-                System.out.println("[오류] 로그 파일을 읽는 중 문제가 발생했습니다: " + e.getMessage());
-            }
-            pause();
+    public static void log(String message) {
+        try (FileWriter fw = new FileWriter(LOG_FILE, true)) {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            fw.write(message + " - " + timestamp + System.lineSeparator());
+        } catch (IOException e) {
+            System.out.println("[오류] 로그 기록 실패: " + e.getMessage());
         }
+    }
 
-        public static void printLogsByType(String unused, Scanner sc) {
-        System.out.print("필터링할 로그 유형을 입력하세요 ([성공], [실패], [건너뜀], [경고], [오류]) >> ");
-        String type = sc.nextLine().trim();
-
-        if (!type.matches("\\[[가-힣]+]")) {
-            System.out.println("[경고] 올바른 로그 유형 형식이 아닙니다.");
-            pause();
-            return;
-        }
-
+    public static void printAllLogs(String unused) {
+        clearConsole();
         try {
             List<String> logs = Files.readAllLines(Paths.get(LOG_FILE));
-            List<String> filtered = logs.stream()
-                .filter(line -> line.contains(type))
-                .collect(Collectors.toList());
-
-            if (filtered.isEmpty()) {
-                System.out.println("[정보] 해당 유형의 로그가 없습니다.");
+            if (logs.isEmpty()) {
+                System.out.println("[정보] 로그 파일이 비어 있습니다.");
             } else {
-                filtered.forEach(System.out::println);
+                logs.forEach(System.out::println);
             }
         } catch (IOException e) {
             System.out.println("[오류] 로그 파일을 읽는 중 문제가 발생했습니다: " + e.getMessage());
         }
         pause();
     }
-        
-        public static void printLogsByDate(String unused, Scanner sc) {
-        System.out.print("필터링할 날짜를 입력하세요 (예: 2025-04-07) >> ");
-        String date = sc.nextLine().trim();
 
-        try {
-            LocalDate.parse(date); // 유효한 날짜인지 확인
-            List<String> logs = Files.readAllLines(Paths.get(LOG_FILE));
-            List<String> filtered = logs.stream()
-                .filter(line -> line.startsWith(date))
-                .collect(Collectors.toList());
+    public static void printLogsByType(String unused, Scanner sc) {
+    System.out.print("필터링할 로그 유형을 입력하세요 ([성공], [실패], [건너뜀], [경고], [오류]) >> ");
+    String type = sc.nextLine().trim();
 
-            if (filtered.isEmpty()) {
-                System.out.println("[정보] 해당 날짜의 로그가 없습니다.");
-            } else {
-                filtered.forEach(System.out::println);
-            }
-        } catch (Exception e) {
-            System.out.println("[경고] 잘못된 날짜 형식입니다.");
-        }
+    if (!type.matches("\\[[가-힣]+]")) {
+        System.out.println("[경고] 올바른 로그 유형 형식이 아닙니다.");
         pause();
+        return;
+    }
+
+    try {
+        List<String> logs = Files.readAllLines(Paths.get(LOG_FILE));
+        List<String> filtered = logs.stream()
+            .filter(line -> line.contains(type))
+            .collect(Collectors.toList());
+
+        if (filtered.isEmpty()) {
+            System.out.println("[정보] 해당 유형의 로그가 없습니다.");
+        } else {
+            filtered.forEach(System.out::println);
+        }
+    } catch (IOException e) {
+        System.out.println("[오류] 로그 파일을 읽는 중 문제가 발생했습니다: " + e.getMessage());
+    }
+    pause();
+    }
+        
+    public static void printLogsByDate(String unused, Scanner sc) {
+    System.out.print("필터링할 날짜를 입력하세요 (예: 2025-04-07) >> ");
+    String date = sc.nextLine().trim();
+
+    try {
+        LocalDate.parse(date); // 유효한 날짜인지 확인
+        List<String> logs = Files.readAllLines(Paths.get(LOG_FILE));
+        List<String> filtered = logs.stream()
+            .filter(line -> line.startsWith(date))
+            .collect(Collectors.toList());
+
+        if (filtered.isEmpty()) {
+            System.out.println("[정보] 해당 날짜의 로그가 없습니다.");
+        } else {
+            filtered.forEach(System.out::println);
+        }
+    } catch (Exception e) {
+        System.out.println("[경고] 잘못된 날짜 형식입니다.");
+    }
+    pause();
     }
         
     public static void printLogsByKeyword(String unused, Scanner sc) {
