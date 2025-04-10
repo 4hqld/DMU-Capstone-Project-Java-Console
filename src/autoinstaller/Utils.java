@@ -125,6 +125,10 @@ public class Utils {
         List<Program> list = loadPrograms();
         System.out.println("=== 사용 가능한 프로그램 목록 ===");
         list.forEach(p -> System.out.println("- " + p.name));
+        if (list.isEmpty()) {
+            System.out.println("[오류] 설치 목록이 비어 있습니다.");
+            return;
+        }
         pause();
     }
 
@@ -227,7 +231,7 @@ public class Utils {
         pause();
     }
 
-    public static void showLogs(Scanner sc) {
+    public static void viewLogs(Scanner sc) {
         while (true) {
             clearConsole();
             System.out.println("=== 로그 보기 ===");
@@ -297,7 +301,7 @@ public class Utils {
         }
     }
 
-    private static void pause() {
+    public static void pause() {
         System.out.println("\n[정보] 엔터를 누르면 관리자 메뉴로 돌아갑니다...");
         scanner.nextLine();
     }
