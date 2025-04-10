@@ -3,6 +3,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        Utils.clearConsole();
         Scanner sc = new Scanner(System.in);
         // 로그인 유형 선택
         System.out.println("===== 로그인 유형 선택 =====");
