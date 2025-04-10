@@ -15,11 +15,6 @@ public class Utils {
     static final String INSTALLER_DIR = "installer/";
     private static final Scanner scanner = new Scanner(System.in);
 
-    /*/
-    public static boolean checkAdminPrivileges() {
-        return System.getProperty("user.name").equals("Administrator");
-    }*/
-
     /*EnvironMent */
     
     public static boolean checkEnvironment() {

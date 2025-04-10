@@ -31,6 +31,8 @@ public class Admin {
             }
         }
     }
+
+    /*Program Management Menu */
     private static void programManagementMenu(Scanner scanner) {
         while (true) {
             Utils.clearConsole();
@@ -64,6 +66,8 @@ public class Admin {
             }
         }
     }
+
+    /*Log Menu */
     private static void LogMenu(Scanner sc){
         while(true){
             Utils.clearConsole();

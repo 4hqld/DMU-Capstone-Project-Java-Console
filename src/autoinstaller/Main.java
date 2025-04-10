@@ -4,13 +4,6 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-        // 관리자 권한 확인
-        /*if (!Utils.checkAdminPrivileges()) {
-            System.out.println("[오류] 관리자 권한이 필요합니다.");
-            return;
-        }*/
-
         // 로그인 유형 선택
         System.out.println("===== 로그인 유형 선택 =====");
         System.out.println("1. 일반 사용자 로그인");
