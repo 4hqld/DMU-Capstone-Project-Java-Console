@@ -2,6 +2,7 @@ package autoinstaller;
 import java.util.Scanner;
 
 import autoinstaller.Accounts.LoginManager;
+import autoinstaller.Accounts.Admin.Admin;
 import autoinstaller.Utils.Utils;
 
 public class Main {

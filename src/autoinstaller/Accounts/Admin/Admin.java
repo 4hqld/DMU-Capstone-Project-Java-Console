@@ -1,7 +1,7 @@
-package autoinstaller;
+package autoinstaller.Accounts.Admin;
 import java.util.Scanner;
 
-import autoinstaller.Accounts.Account;
+import autoinstaller.Accounts.AccountsManager;
 import autoinstaller.Utils.Utils;
 
 public class Admin {
@@ -23,7 +23,7 @@ public class Admin {
                     programManagementMenu(sc);
                     break;
                 case "2":
-                    Account.AccountManagementMenu(sc);
+                    AccountsManager.AccountManagementMenu(sc);
                     break;
                 case "3":
                     Utils.clearConsole();

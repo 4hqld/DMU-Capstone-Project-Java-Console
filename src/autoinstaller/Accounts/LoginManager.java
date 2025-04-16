@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class LoginManager {
 
     private static final String ACCOUNT_FILE = "JSON/accounts.json";
-    private static List<Account> accountList;
+    private static List<AccountsManager> accountList;
 
     static {
         loadAccounts();
@@ -22,7 +22,7 @@ public class LoginManager {
     private static void loadAccounts() {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            accountList = mapper.readValue(new File(ACCOUNT_FILE), new TypeReference<List<Account>>() {});
+            accountList = mapper.readValue(new File(ACCOUNT_FILE), new TypeReference<List<AccountsManager>>() {});
         } catch (Exception e) {
             System.out.println("[오류] 계정 로드 실패: " + e.getMessage());
             System.exit(1);
@@ -33,7 +33,7 @@ public class LoginManager {
         return authenticateAndGetAccount(sc, isAdmin) != null;
     }
 
-    public static Account authenticateAndGetAccount(Scanner sc, boolean isAdmin) {
+    public static AccountsManager authenticateAndGetAccount(Scanner sc, boolean isAdmin) {
         int attempts = 0;
         Console console = System.console();
 
@@ -58,7 +58,7 @@ public class LoginManager {
                 continue;
             }
 
-            for (Account acc : accountList) {
+            for (AccountsManager acc : accountList) {
                 if (acc.getUsername().equals(id) && acc.getPassword().equals(pw)) {
                     // 권한 확인
                     if (isAdmin && !"admin".equalsIgnoreCase(acc.getRole())) {

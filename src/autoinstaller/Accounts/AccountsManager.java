@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-public class Account {
+public class AccountsManager {
     private String username;
     private String password;
     private String role;
@@ -61,10 +61,10 @@ public class Account {
     /* View Accounts */
     public static void ViewAccounts(Scanner sc) {
         try {
-            List<Account> accountList = mapper.readValue(new File(ACCOUNT_FILE), new TypeReference<List<Account>>() {});
+            List<AccountsManager> accountList = mapper.readValue(new File(ACCOUNT_FILE), new TypeReference<List<AccountsManager>>() {});
             System.out.println("총 " + accountList.size() + "개의 계정이 있습니다.");
             System.out.println("----------------------------");
-            for (Account acc : accountList) {
+            for (AccountsManager acc : accountList) {
                 System.out.println("ID: " + acc.getUsername() + " | 권한: " + acc.getRole());
             }
             System.out.println("----------------------------");
@@ -76,7 +76,7 @@ public class Account {
     /* Create Account */
     public static void CreateAccount(Scanner sc) {
         try {
-            List<Account> accountList = mapper.readValue(new File(ACCOUNT_FILE), new TypeReference<List<Account>>() {});
+            List<AccountsManager> accountList = mapper.readValue(new File(ACCOUNT_FILE), new TypeReference<List<AccountsManager>>() {});
 
             System.out.print("새 ID 입력: ");
             String newId = sc.nextLine().trim();
@@ -90,14 +90,14 @@ public class Account {
                 return;
             }
 
-            for (Account acc : accountList) {
+            for (AccountsManager acc : accountList) {
                 if (acc.getUsername().equalsIgnoreCase(newId)) {
                     System.out.println("[경고] 이미 존재하는 ID입니다.");
                     return;
                 }
             }
 
-            Account newAcc = new Account();
+            AccountsManager newAcc = new AccountsManager();
             newAcc.username = newId;
             newAcc.password = newPw;
             newAcc.role = newRole;
@@ -116,16 +116,16 @@ public class Account {
     public static void DeleteAccount(Scanner sc) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            List<Account> accountList = mapper.readValue(new File(ACCOUNT_FILE), new TypeReference<List<Account>>() {});
+            List<AccountsManager> accountList = mapper.readValue(new File(ACCOUNT_FILE), new TypeReference<List<AccountsManager>>() {});
 
             System.out.print("삭제할 ID 입력: ");
             String delId = sc.nextLine().trim();
 
-            Iterator<Account> iterator = accountList.iterator();
+            Iterator<AccountsManager> iterator = accountList.iterator();
             boolean found = false;
 
             while (iterator.hasNext()) {
-                Account acc = iterator.next();
+                AccountsManager acc = iterator.next();
                 if (acc.getUsername().equalsIgnoreCase(delId)) {
                     if ("admin".equalsIgnoreCase(acc.getRole())) {
                         System.out.println("[경고] 관리자 계정은 삭제할 수 없습니다.");
