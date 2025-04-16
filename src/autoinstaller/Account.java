@@ -113,7 +113,8 @@ public class Account {
     /* Delete Account */
     public static void DeleteAccount(Scanner sc) {
         try {
-            List<Account> accountList = mapper.readValue(new File(ACCOUNT_FILE), new TypeReference<List<Account>>() {});
+            ObjectMapper mapper = new ObjectMapper();
+            List<Account> accountList = mapper.readValue(new File("JSON/accounts.json"), new TypeReference<List<Account>>() {});
 
             System.out.print("삭제할 ID 입력: ");
             String delId = sc.nextLine().trim();
@@ -124,15 +125,20 @@ public class Account {
             while (iterator.hasNext()) {
                 Account acc = iterator.next();
                 if (acc.getUsername().equalsIgnoreCase(delId)) {
+                    if ("admin".equalsIgnoreCase(acc.getRole())) {
+                        System.out.println("[경고] 관리자 계정은 삭제할 수 없습니다.");
+                        Utils.log("[경고] 관리자 계정 삭제 시도 차단 - ID: " + delId);
+                        return;
+                    }
+
                     iterator.remove();
                     found = true;
                     break;
                 }
-                //admin 삭제 방지, 삭제 시 해당 ID,PW 입력하도록 해야 함.
             }
 
             if (found) {
-                mapper.writerWithDefaultPrettyPrinter().writeValue(new File(ACCOUNT_FILE), accountList);
+                mapper.writerWithDefaultPrettyPrinter().writeValue(new File("JSON/accounts.json"), accountList);
                 System.out.println("[성공] 계정이 삭제되었습니다.");
                 Utils.log("[정보] 계정 삭제됨 - ID: " + delId);
             } else {
