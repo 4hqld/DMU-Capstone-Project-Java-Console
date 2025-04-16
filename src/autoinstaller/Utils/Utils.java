@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class Utils {
     static final String INSTALL_LIST = "JSON/install_list.json";
-    static final String LOG_FILE = "logs/log.txt";
+    static final String LOG_FILE = "logs/logs.txt";
     static final String INSTALLER_DIR = "installer/";
     private static final Scanner scanner = new Scanner(System.in);
 
