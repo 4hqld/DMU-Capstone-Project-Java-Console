@@ -1,7 +1,9 @@
-package autoinstaller;
+package autoinstaller.Accounts;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import autoinstaller.Utils.Utils;
 
 import java.io.Console;
 import java.io.File;

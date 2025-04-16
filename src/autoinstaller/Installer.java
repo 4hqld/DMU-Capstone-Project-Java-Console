@@ -3,6 +3,10 @@ package autoinstaller;
 import java.io.File;
 import java.util.*;
 
+import autoinstaller.Utils.Program;
+import autoinstaller.Utils.ProgramInstallResult;
+import autoinstaller.Utils.Utils;
+
 public class Installer {
     public static void run(Scanner sc) {
         Utils.clearConsole();

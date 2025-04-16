@@ -1,4 +1,4 @@
-package autoinstaller;
+package autoinstaller.Utils;
 
 import java.io.*;
 import java.net.*;

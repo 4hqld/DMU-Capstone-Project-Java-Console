@@ -1,6 +1,9 @@
 package autoinstaller;
 import java.util.Scanner;
 
+import autoinstaller.Accounts.Account;
+import autoinstaller.Utils.Utils;
+
 public class Admin {
     public static void run(Scanner sc) {
         Utils.log("[정보] 관리자 로그인");
