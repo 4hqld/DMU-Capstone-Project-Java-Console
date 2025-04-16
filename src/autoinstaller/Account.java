@@ -114,7 +114,7 @@ public class Account {
     public static void DeleteAccount(Scanner sc) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            List<Account> accountList = mapper.readValue(new File("JSON/accounts.json"), new TypeReference<List<Account>>() {});
+            List<Account> accountList = mapper.readValue(new File(ACCOUNT_FILE), new TypeReference<List<Account>>() {});
 
             System.out.print("삭제할 ID 입력: ");
             String delId = sc.nextLine().trim();
@@ -138,7 +138,7 @@ public class Account {
             }
 
             if (found) {
-                mapper.writerWithDefaultPrettyPrinter().writeValue(new File("JSON/accounts.json"), accountList);
+                mapper.writerWithDefaultPrettyPrinter().writeValue(new File(ACCOUNT_FILE), accountList);
                 System.out.println("[성공] 계정이 삭제되었습니다.");
                 Utils.log("[정보] 계정 삭제됨 - ID: " + delId);
             } else {
