@@ -10,8 +10,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import autoinstaller.Program.Program;
+import autoinstaller.Program.ProgramInstallResult;
+
 public class Utils {
-    static final String INSTALL_LIST = "JSON/install_list.json";
+    static final String INSTALL_LIST = "resources/JSON/install_list.json";
     static final String LOG_FILE = "logs/logs.txt";
     static final String INSTALLER_DIR = "installer/";
     private static final Scanner scanner = new Scanner(System.in);

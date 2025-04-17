@@ -4,6 +4,7 @@ import java.util.Scanner;
 import autoinstaller.Accounts.LoginManager;
 import autoinstaller.Accounts.Admin.Admin;
 import autoinstaller.Utils.Utils;
+import autoinstaller.installer.Installer;
 
 public class Main {
     public static void main(String[] args) {

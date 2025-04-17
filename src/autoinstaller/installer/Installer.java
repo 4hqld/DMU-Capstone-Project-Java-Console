@@ -1,10 +1,10 @@
-package autoinstaller;
+package autoinstaller.installer;
 
 import java.io.File;
 import java.util.*;
 
-import autoinstaller.Utils.Program;
-import autoinstaller.Utils.ProgramInstallResult;
+import autoinstaller.Program.Program;
+import autoinstaller.Program.ProgramInstallResult;
 import autoinstaller.Utils.Utils;
 
 public class Installer {

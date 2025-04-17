@@ -19,7 +19,7 @@ public class AccountsManager {
     public String getPassword() { return password; }
     public String getRole() { return role; }
 
-    private static final String ACCOUNT_FILE = "JSON/accounts.json";
+    private static final String ACCOUNT_FILE = "resources/JSON/accounts.json";
     private static final ObjectMapper mapper = new ObjectMapper();
 
     /* Account Management */

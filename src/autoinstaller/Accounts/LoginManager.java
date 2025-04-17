@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class LoginManager {
 
-    private static final String ACCOUNT_FILE = "JSON/accounts.json";
+    private static final String ACCOUNT_FILE = "resources/JSON/accounts.json";
     private static List<AccountsManager> accountList;
 
     static {

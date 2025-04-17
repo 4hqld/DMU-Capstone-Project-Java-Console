@@ -1,4 +1,4 @@
-package autoinstaller.Utils;
+package autoinstaller.Program;
 
 public class ProgramInstallResult {
     private String name;

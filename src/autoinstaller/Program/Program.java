@@ -1,4 +1,4 @@
-package autoinstaller.Utils;
+package autoinstaller.Program;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
