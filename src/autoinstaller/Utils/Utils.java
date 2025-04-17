@@ -16,7 +16,7 @@ import autoinstaller.Program.ProgramInstallResult;
 public class Utils {
     static final String INSTALL_LIST = "resources/JSON/install_list.json";
     static final String LOG_FILE = "logs/logs.txt";
-    static final String INSTALLER_DIR = "installer/";
+    static final String INSTALLER_DIR = "resources/installer/";
     private static final Scanner scanner = new Scanner(System.in);
 
     /*EnvironMent */
