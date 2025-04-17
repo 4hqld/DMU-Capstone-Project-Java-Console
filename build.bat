@@ -1,62 +1,65 @@
 @echo off
 setlocal
 
-:: ???? ??
+:: Directory configuration
 set SRC=src
 set BUILD=build
 set LIB=lib
 set JSON=JSON
 set JAR_NAME=AutoInstaller.jar
 
-:: ?? ???? ???
+:: Change this to your actual main class (with package name if exists)
+:: Example: autoinstaller.Main or just Main
+set MAIN_CLASS=autoinstaller.Main
+
+:: Clean previous build
 if exist %BUILD% (
-    echo [Info] Initializing...
+    echo [INFO] Cleaning up previous build directory...
     rmdir /s /q %BUILD%
 )
 mkdir %BUILD%
 
-:: ????? ?? (????? ??)
+:: Classpath including external libraries
 set CLASSPATH=%LIB%\jackson-annotations-2.15.2.jar;%LIB%\jackson-core-2.15.2.jar;%LIB%\jackson-databind-2.15.2.jar
 
-:: ?? Java ?? ??? ??
-echo Finding Sources...
+:: Collect all Java source files
+echo [INFO] Collecting source files...
 del sources.txt >nul 2>&1
 for /r %SRC% %%f in (*.java) do (
     echo %%f >> sources.txt
 )
 
-:: ???
-echo Loading...
+:: Compile
+echo [INFO] Compiling sources...
 javac -cp %CLASSPATH% -d %BUILD% @sources.txt
 
 if not %ERRORLEVEL%==0 (
-    echo Failed!
+    echo [ERROR] Compilation failed!
     del sources.txt >nul 2>&1
     pause
     exit /b
 )
 
-:: ??? ?? ? ?? ?? ??? ??
 del sources.txt >nul 2>&1
-echo Success!
+echo [SUCCESS] Compilation completed.
 
-:: Manifest ?? ??
-echo Main-Class: Main> manifest.txt
+:: Create manifest file
+echo Main-Class: %MAIN_CLASS% > manifest.txt
 
-:: ??? ???(JSON ?) ??
+:: Copy resource files (e.g., JSON)
 xcopy %JSON% %BUILD%\JSON\ /E /I /Y >nul
 
-:: JAR ??
-echo Generating jar file...
+:: Create executable JAR
+echo [INFO] Creating JAR file...
 jar cfm %JAR_NAME% manifest.txt -C %BUILD% .
 
 if %ERRORLEVEL%==0 (
-    echo [Success] %JAR_NAME% Generated!
+    echo [SUCCESS] JAR file "%JAR_NAME%" created successfully.
 ) else (
-    echo [Error] JAR Failed!
+    echo [ERROR] Failed to create JAR file.
 )
 
-:: ??
+:: Cleanup
 del manifest.txt >nul 2>&1
 endlocal
 pause
