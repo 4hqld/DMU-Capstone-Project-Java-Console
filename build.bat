@@ -47,7 +47,7 @@ echo [SUCCESS] Compilation completed.
 echo Main-Class: %MAIN_CLASS% > manifest.txt
 
 :: Copy resource files (e.g., JSON)
-xcopy %JSON% %BUILD%\JSON\ /E /I /Y >nul
+xcopy %JSON% %BUILD%\resources\JSON\ /E /I /Y >nul
 
 :: Create executable JAR
 echo [INFO] Creating JAR file...
