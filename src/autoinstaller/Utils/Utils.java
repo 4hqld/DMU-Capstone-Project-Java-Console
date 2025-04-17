@@ -2,6 +2,7 @@ package autoinstaller.Utils;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -223,13 +224,22 @@ public class Utils {
     
     /*LOG */
     public static void log(String message) {
-        try (FileWriter fw = new FileWriter(LOG_FILE, true)) {
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            fw.write(message + " - " + timestamp + System.lineSeparator());
+        try {
+            Files.createDirectories(Paths.get("logs"));
+            BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(
+                    new FileOutputStream("logs/logs.txt", true),
+                    StandardCharsets.UTF_8
+                )
+            );
+            writer.write("[" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "] " + message);
+            writer.newLine();
+            writer.close();
         } catch (IOException e) {
-            System.out.println("[오류] 로그 기록 실패: " + e.getMessage());
+            System.out.println("[오류] 로그 파일 저장 실패: " + e.getMessage());
         }
     }
+
 
     public static void printAllLogs(String unused) {
         clearConsole();
